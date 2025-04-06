@@ -20,9 +20,11 @@ const HeroSection = () => {
 
             }
 
+        };
         window.addEventListener('scroll',handlescroll);
-    }
-}, []);
+        return () => window.removeEventListener('scroll',handlescroll);
+    
+    }, []);
 
 
   return ( 
