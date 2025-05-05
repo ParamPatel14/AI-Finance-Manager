@@ -19,7 +19,7 @@ model User {
   email       String   @unique
   name        String?
   imageUrl    String?
-  transaction Transaction[]
+  transactions Transaction[]
   accounts    Account[]
   budgets     Budget[]
   createdAt   DateTime  @default(now())
@@ -46,7 +46,7 @@ model Account {
 }
 
 enum AccountType {
-  CHECKING
+  CURRENT
   SAVINGS
 }
 
