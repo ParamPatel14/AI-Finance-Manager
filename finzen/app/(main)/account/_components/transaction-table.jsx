@@ -2,12 +2,15 @@
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import React from 'react'
-import { format } from "date-fns";
+import React, { useState } from 'react'
+import { format, set } from "date-fns";
 import { categoryColors } from '@/data/categories';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
-import { Clock,RefreshCw } from 'lucide-react';
+import { ChevronDown, ChevronUp, Clock,MoreHorizontal,RefreshCw } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 
 const RECURRING_INTERVALS = {
@@ -18,8 +21,21 @@ const RECURRING_INTERVALS = {
 };
 
 const TransactionTable = ({ transactions }) => {
+
+  const router = useRouter();
+  const [selectedIds,setSelectedIds] = useState([]);
+  const [sortConfig, setSortConfig] = useState({
+    field: "date",
+    direction: "desc",
+  });
+
   const filteredAndSortedTransactions = transactions;
-  const handleSort = ()=>{}  
+  const handleSort = (field)=>{
+    setSortConfig(current=> ({
+        field,
+        direction:current.field === field && current.direction === "asc" ? "desc" : "asc",
+    }))
+  }  
   
 
 
@@ -37,7 +53,13 @@ const TransactionTable = ({ transactions }) => {
                             className="cursor.pointer"
                             onClick={() => handleSort("date")}
                             >
-                            <div className='flex items-center'>Date</div>
+                            <div className='flex items-center'>Date {" "} 
+                                {sortConfig.field === "date" &&
+                                    (sortConfig.direction === "asc"? (<ChevronUp className="ml-1 h-4 w-4"/>
+                                    ): (
+                                        <ChevronDown className="ml-1 h-4 w-4"/>
+                                    )
+                                    )}</div>
                         </TableHead>
                         <TableHead>Description</TableHead>
                         <TableHead 
@@ -108,7 +130,15 @@ const TransactionTable = ({ transactions }) => {
                                                     </Badge>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                <p>Add to library</p>
+                                                        <div className='text-sm'>
+                                                            <div className='font-medium'>Next Date:</div>
+                                                            <div>
+                                                                {format(
+                                                                    new Date(transaction.nextRecurringDate),
+                                                                    "PP"
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider>
@@ -119,6 +149,32 @@ const TransactionTable = ({ transactions }) => {
                                         </Badge>
                                     
                                     )}
+                                </TableCell>
+                                <TableCell>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                                <MoreHorizontal className="h-4 w-4"/>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuLabel
+                                                onClick= {() => 
+                                                    router.push(
+                                                        `/transaction/create?edit=${transaction.id}`
+                                                    )
+                                                }
+
+                                            >
+                                            Edit
+                                            </DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="to-destructive" >Delete</DropdownMenuItem>
+                                    
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+
+
                                 </TableCell>
 
                             </TableRow>
