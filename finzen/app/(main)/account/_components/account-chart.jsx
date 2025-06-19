@@ -1,13 +1,25 @@
 "use client";
 
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from '@/components/ui/select';
-
-import { endOfDay, format, startOfDay, subDays } from 'date-fns';
-import React, { useMemo, useState } from 'react'
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis,Tooltip } from 'recharts';
-
+import { useState, useMemo } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { format, subDays, startOfDay, endOfDay } from "date-fns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DATE_RANGES = {
   "7D": { label: "Last 7 Days", days: 7 },
@@ -17,9 +29,9 @@ const DATE_RANGES = {
   ALL: { label: "All Time", days: null },
 };
 
-const AccountChart = ({ transactions }) => {
+export function AccountChart({ transactions }) {
   const [dateRange, setDateRange] = useState("1M");
-   
+
   const filteredData = useMemo(() => {
     const range = DATE_RANGES[dateRange];
     const now = new Date();
@@ -52,7 +64,7 @@ const AccountChart = ({ transactions }) => {
     );
   }, [transactions, dateRange]);
 
-
+  // Calculate totals for the selected period
   const totals = useMemo(() => {
     return filteredData.reduce(
       (acc, day) => ({
@@ -62,9 +74,6 @@ const AccountChart = ({ transactions }) => {
       { income: 0, expense: 0 }
     );
   }, [filteredData]);
-
-
-
 
   return (
     <Card>
@@ -159,5 +168,3 @@ const AccountChart = ({ transactions }) => {
     </Card>
   );
 }
-
-export default AccountChart
