@@ -10,8 +10,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 model User {
   id          String   @id @default(uuid())
@@ -41,6 +39,8 @@ model Account {
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
+
+  @@unique([id, userId])
 
   @@map("accounts")
 }
@@ -72,6 +72,8 @@ model Transaction {
 
   @@index([userId])
   @@index([accountId])
+
+  @@unique([id, userId])
   @@map("transactions")
 }
 enum TransactionType {
